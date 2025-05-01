@@ -18,7 +18,8 @@ namespace Company.BLL.Reposatories
         }
         public int delete(Department model)
         {
-            throw new NotImplementedException();
+            _dbContext.Remove(model);
+            return _dbContext.SaveChanges();
         }
 
         public IEnumerable<Department> GetAll()
@@ -28,17 +29,20 @@ namespace Company.BLL.Reposatories
 
         public Department GetById(int id)
         {
-            throw new NotImplementedException();
+            var Result =_dbContext.Departments.Find(id);
+            return Result;
         }
 
         public int Insert(Department model)
         {
-            throw new NotImplementedException();
+            _dbContext.Add(model);
+            return _dbContext.SaveChanges();
         }
 
         public int update(Department model)
         {
-            throw new NotImplementedException();
+            _dbContext.Update(model);
+            return _dbContext.SaveChanges();
         }
     }
 }
