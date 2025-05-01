@@ -1,4 +1,5 @@
 ﻿using Company.BLL.Reposatories;
+using Company.hesham.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.hesham.PL.Controllers
@@ -14,6 +15,11 @@ namespace Company.hesham.PL.Controllers
         {
             var model = _departmentReposatory.GetAll();
             return View(model);
+        }
+       public IActionResult Insert(int id)
+        {
+
+            return View();
         }
     }
 }
