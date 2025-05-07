@@ -47,7 +47,7 @@ namespace Company.hesham.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? id)
+        public IActionResult Details(int? id ,string viewname ="Details")
         {
             if (id is null) return BadRequest("Invalid Id");
 
@@ -55,16 +55,16 @@ namespace Company.hesham.PL.Controllers
             if (department is null) return NotFound("Department Not Found");
            
             
-            return View(department);
+            return View(viewname,department);
             
         }
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            if (id is null) return BadRequest("InValid Id");
-            var department = _departmentReposatory.GetById(id.Value);
-            if (department is null) return NotFound("Department Not Found");
-            return View(department);
+            //    if (id is null) return BadRequest("InValid Id");
+            //    var department = _departmentReposatory.GetById(id.Value);
+            //    if (department is null) return NotFound("Department Not Found");
+            return Details(id,"Edit");
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -108,11 +108,11 @@ namespace Company.hesham.PL.Controllers
         [HttpGet]
         public IActionResult Delete(int? id)
         {
-            if (id is null) return BadRequest("Invalid Id");
+            //if (id is null) return BadRequest("Invalid Id");
 
-            var department = _departmentReposatory.GetById(id.Value);
-            if (department is null) return NotFound();
-            return View(department);
+            //var department = _departmentReposatory.GetById(id.Value);
+            //if (department is null) return NotFound();
+            return Details(id,"Delete");
         }
         [HttpPost]
         public IActionResult Delete([FromRoute] int id , Department department)
