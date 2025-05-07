@@ -105,5 +105,28 @@ namespace Company.hesham.PL.Controllers
         //    }
         //    return View(department);
         //}
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id is null) return BadRequest("Invalid Id");
+
+            var department = _departmentReposatory.GetById(id.Value);
+            if (department is null) return NotFound();
+            return View(department);
+        }
+        [HttpPost]
+        public IActionResult Delete([FromRoute] int id , Department department)
+        {
+           if(ModelState.IsValid)
+            {
+                if (id != department.Id) return BadRequest("InValid Id");
+                int Result = _departmentReposatory.delete(department);
+                if (Result > 0)
+                {
+                    return RedirectToAction(nameof(GetAll));
+                }
+            }
+           return View(department);
+        }
     }
 }
