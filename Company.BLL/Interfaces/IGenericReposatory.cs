@@ -7,8 +7,12 @@ using Company.hesham.DAL.Models;
 
 namespace Company.BLL.Interfaces
 {
-    public interface IEmployeeReposatorycs :IGenericReposatory<Employee>
+    public interface IGenericReposatory<T> where T :BaseEntity
     {
-       
+        IEnumerable<T> GetAll();
+        T? GetById(int id);
+        int Add(T t);
+        int Update(T t);
+        int Delete(T t);
     }
 }

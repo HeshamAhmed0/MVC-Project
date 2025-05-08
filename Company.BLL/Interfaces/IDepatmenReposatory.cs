@@ -7,12 +7,8 @@ using Company.hesham.DAL.Models;
 
 namespace Company.BLL.Interfaces
 {
-    public interface IDepatmenReposatory
+    public interface IDepatmenReposatory :IGenericReposatory<Department>
     {
-        public IEnumerable<Department> GetAll();
-        public Department GetById(int id);
-        public int Insert(Department model);
-        public int delete(Department model);
-        public int update(Department model);
+      
     }
 }
