@@ -1,4 +1,5 @@
-﻿using Company.BLL.Reposatories;
+﻿using Company.BLL.Interfaces;
+using Company.BLL.Reposatories;
 using Company.hesham.DAL.Models;
 using Company.hesham.PL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,8 @@ namespace Company.hesham.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly DepartmentReposatory _departmentReposatory;
-        public DepartmentController(DepartmentReposatory departmentReposatory)
+        private readonly IDepatmenReposatory _departmentReposatory;
+        public DepartmentController(IDepatmenReposatory departmentReposatory)
         {
             _departmentReposatory = departmentReposatory;
         }
@@ -34,9 +35,9 @@ namespace Company.hesham.PL.Controllers
                 {
                     Code = model.Code,
                     Name = model.Name,
-                    CreatenIn= model.CreatenIn,
+                    CreateAt = model.CreatenIn,
                 };
-               int result= _departmentReposatory.Insert(department);
+               int result= _departmentReposatory.Add(department);
                 if (result > 0)
                 {
                     return RedirectToAction("GetAll");
@@ -73,7 +74,7 @@ namespace Company.hesham.PL.Controllers
             if (ModelState.IsValid)
             {
 
-                int result = _departmentReposatory.update(department);
+                int result = _departmentReposatory.Update(department);
                 if (result > 0)
                 {
                     return RedirectToAction("GetAll");
@@ -120,7 +121,7 @@ namespace Company.hesham.PL.Controllers
            if(ModelState.IsValid)
             {
                 if (id != department.Id) return BadRequest("InValid Id");
-                int Result = _departmentReposatory.delete(department);
+                int Result = _departmentReposatory.Delete(department);
                 if (Result > 0)
                 {
                     return RedirectToAction(nameof(GetAll));
