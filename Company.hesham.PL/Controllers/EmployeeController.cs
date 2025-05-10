@@ -26,23 +26,23 @@ namespace Company.hesham.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(CreateEmployeeDto createEmployeeDto)
+        public IActionResult Create(UpdateEmployeeDto updateEmployeeDto)
         {
             if (ModelState.IsValid)
             {
 
                 Employee employee = new Employee()
                 {
-                    Name = createEmployeeDto.Name,
-                    HiringDate = createEmployeeDto.HiringDate,
-                    Address = createEmployeeDto.Address,
-                    Age = createEmployeeDto.Age,
-                    CreateAt = createEmployeeDto.CreateAt,
-                    Email = createEmployeeDto.Email,
-                    IsActive = createEmployeeDto.IsActive,
-                    IsDeleted = createEmployeeDto.IsDeleted,
-                    Phone = createEmployeeDto.Phone,
-                    salary = createEmployeeDto.salary,
+                    Name = updateEmployeeDto.Name,
+                    HiringDate = updateEmployeeDto.HiringDate,
+                    Address = updateEmployeeDto.Address,
+                    Age = updateEmployeeDto.Age,
+                    CreateAt = updateEmployeeDto.CreateAt,
+                    Email = updateEmployeeDto.Email,
+                    IsActive = updateEmployeeDto.IsActive,
+                    IsDeleted = updateEmployeeDto.IsDeleted,
+                    Phone = updateEmployeeDto.Phone,
+                    salary = updateEmployeeDto.salary,
                 };
                int result =employeeReposatory.Add(employee);
                 if (result > 0)
@@ -72,9 +72,23 @@ namespace Company.hesham.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Edit(int? id,Employee employee)
+        public IActionResult Edit(int? id,UpdateEmployeeDto updateEmployeeDto)
         {
             if (id is null) return BadRequest("InValid Id");
+            Employee employee = new Employee()
+            {
+                Id = id.Value,
+                Name = updateEmployeeDto.Name,
+                Address = updateEmployeeDto.Address,
+                HiringDate = updateEmployeeDto.HiringDate,
+                Age = updateEmployeeDto.Age,
+                CreateAt=updateEmployeeDto.CreateAt,
+                Email = updateEmployeeDto.Email,
+                IsDeleted = updateEmployeeDto.IsDeleted,
+                IsActive = updateEmployeeDto.IsActive,
+                Phone = updateEmployeeDto.Phone,
+                salary=updateEmployeeDto.salary,
+            };
             if (id != employee.Id) return NotFound();
              int result= employeeReposatory.Update(employee);
             if (result > 0)

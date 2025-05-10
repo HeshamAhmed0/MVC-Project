@@ -5,46 +5,8 @@
 
 <h1>Employee Details</h1>
 <div>
-    <div>
-        <label asp-for="Name" class="col-form-label"></label>
-        <input asp-for="Name" class="form-control" readonly />
-    </div>
-    <div>
-        <label asp-for="Age" class="col-form-label"></label>
-        <input asp-for="Age" class="form-control" readonly />
-    </div>
-    <div>
-        <label asp-for="Email" class="col-form-label"></label>
-        <input asp-for="Email" class="form-control" readonly />
-    </div>
-    <div>
-        <label asp-for="Address" class="col-form-label"></label>
-        <input asp-for="Address" class="form-control" readonly />
-    </div>
-    <div>
-        <label asp-for="Phone" class="col-form-label"></label>
-        <input asp-for="Phone" class="form-control" readonly />
-    </div>
-    <div>
-        <label asp-for="salary" class="col-form-label"></label>
-        <input asp-for="salary" class="form-control" />
-    </div>
-    <div>
-        <label asp-for="CreateAt" class="col-form-label"></label>
-        <input asp-for="CreateAt" class="form-control" readonly />
-    </div>
-    <div>
-        <label asp-for="HiringDate" class="col-form-label"></label>
-        <input asp-for="HiringDate" class="form-control" readonly />
-    </div>
-    <div>
-        <label asp-for="IsActive" class="col-form-label"></label>
-        <input asp-for="IsActive" class="form-control" readonly />
-    </div>
-    <div>
-        <label asp-for="IsDeleted" class="col-form-label"></label>
-        <input asp-for="IsDeleted" class="form-control" readonly />
-    </div>
+    <partial name="EmployeePartialView\DetailsDeletePartialView"></partial>
+
     <div class="mt-3">
         <a class="btn btn-info" asp-action="Edit" asp-controller="Employee" asp-route-id="@Model.Id">Edit</a>
         <a asp-action="GetAll" asp-controller="Employee" class="btn btn-secondary">Back To List</a>
