@@ -62,17 +62,31 @@ namespace Company.hesham.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            //    if (id is null) return BadRequest("InValid Id");
-            //    var department = _departmentReposatory.GetById(id.Value);
-            //    if (department is null) return NotFound("Department Not Found");
-            return Details(id,"Edit");
+            if (id is null) return BadRequest("InValid Id");
+            var department = _departmentReposatory.GetById(id.Value);
+            if (department is null) return NotFound("Department Not Found");
+
+            CreateDepartmentDto createDepartmentDto = new CreateDepartmentDto()
+            {
+                Name=department.Name,
+                Code=department.Code,
+                CreatenIn=department.CreateAt,
+            };
+            return View(createDepartmentDto);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id,Department department)
+        public IActionResult Edit([FromRoute] int id,CreateDepartmentDto _department)
         {
             if (ModelState.IsValid)
             {
+                Department department = new Department()
+                {
+                    Id=id,
+                    Name=_department.Name,
+                    Code=_department.Code,
+                    CreateAt=_department.CreatenIn,
+                };
 
                 int result = _departmentReposatory.Update(department);
                 if (result > 0)
@@ -81,7 +95,7 @@ namespace Company.hesham.PL.Controllers
                 }
 
             }
-            return View(department);
+            return View(_department);
         }
 
         /// This is not Perfect Casting
