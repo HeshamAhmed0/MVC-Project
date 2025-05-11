@@ -18,5 +18,6 @@ namespace Company.hesham.PL.Models
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime HiringDate { get; set; }
+        public int? DepartmentId { get; set; }
     }
 }

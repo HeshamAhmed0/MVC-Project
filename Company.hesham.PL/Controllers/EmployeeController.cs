@@ -1,5 +1,6 @@
 ﻿using Company.BLL.Interfaces;
 using Company.BLL.Reposatories;
+using Company.hesham.DAL.Data.DbContexts;
 using Company.hesham.DAL.Models;
 using Company.hesham.PL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -9,20 +10,26 @@ namespace Company.hesham.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeReposatorycs employeeReposatory;
+        private readonly IDepatmenReposatory _depatmenReposatory;
 
-        public EmployeeController(IEmployeeReposatorycs _employeeReposatory)
+        public EmployeeController(IEmployeeReposatorycs _employeeReposatory,IDepatmenReposatory depatmenReposatory)
         {
             employeeReposatory = _employeeReposatory;
+            _depatmenReposatory = depatmenReposatory;
         }
         [HttpGet]
         public IActionResult GetAll()
         {
           var model =employeeReposatory.GetAll();
+            var department = _depatmenReposatory.GetAll();
+            ViewData["department"] = department;
             return View(model);
         }
         [HttpGet]
         public IActionResult Create()
         {
+            var department = _depatmenReposatory.GetAll();
+            ViewData["department"]=department;
             return View();
         }
         [HttpPost]
@@ -43,6 +50,7 @@ namespace Company.hesham.PL.Controllers
                     IsDeleted = updateEmployeeDto.IsDeleted,
                     Phone = updateEmployeeDto.Phone,
                     salary = updateEmployeeDto.salary,
+                    DepartmentId = updateEmployeeDto.DepartmentId,
                 };
                int result =employeeReposatory.Add(employee);
                 if (result > 0)
@@ -74,12 +82,31 @@ namespace Company.hesham.PL.Controllers
             
         }
         [HttpGet]
-        public IActionResult Edit()
+        public IActionResult Edit(int? id)
         {
-            return View();
+            var department = _depatmenReposatory.GetAll();
+            ViewData["department"] = department;
+            if (id is null) return NotFound();
+            var employee = employeeReposatory.GetById(id.Value);
+            UpdateEmployeeDto updateEmployeeDto = new UpdateEmployeeDto()
+            {
+                Name=employee.Name,
+                DepartmentId=employee.DepartmentId,
+                HiringDate=employee.HiringDate,
+                IsDeleted=employee.IsDeleted,
+                Email=employee.Email,
+               Address=employee.Address,
+               Age=employee.Age,
+               CreateAt=employee.CreateAt,
+               IsActive=employee.IsActive,
+               Phone=employee.Phone,
+               salary=employee.salary,
+
+            };
+            return View(updateEmployeeDto);
         }
         [HttpPost]
-        public IActionResult Edit(int? id,UpdateEmployeeDto updateEmployeeDto)
+        public IActionResult Edit(int? id,Employee updateEmployeeDto)
         {
             if (id is null) return BadRequest("InValid Id");
             Employee employee = new Employee()
@@ -95,6 +122,7 @@ namespace Company.hesham.PL.Controllers
                 IsActive = updateEmployeeDto.IsActive,
                 Phone = updateEmployeeDto.Phone,
                 salary=updateEmployeeDto.salary,
+                DepartmentId = updateEmployeeDto.DepartmentId,
             };
             if (id != employee.Id) return NotFound();
              int result= employeeReposatory.Update(employee);

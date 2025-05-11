@@ -1,5 +1,12 @@
 ﻿@model UpdateEmployeeDto
 
+@{
+    @ViewData["department"];
+}
+
+@{
+    var Departments = new SelectList(ViewData["department"] as IEnumerable<Department>,"Id","Name");
+}
  <div class="my-3">
         <label asp-for="Name" class="col-form-label"></label>
         <input asp-for="Name" class="form-control" />
@@ -53,4 +60,10 @@
     <div class="my-3">
         <label asp-for="IsDeleted" class="form-check"></label>
         <input asp-for="IsDeleted" class="col-form-label" />
+    </div> 
+    <div class="my-3">
+        <label asp-for="DepartmentId" class="form-check"></label>
+       <select asp-for="DepartmentId" asp-items="Departments" class="form-control" >
+           <option >-- Select Department --</option>
+       </select>
     </div>
