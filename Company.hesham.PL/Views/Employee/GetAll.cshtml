@@ -3,6 +3,37 @@
     ViewData["Title"] = "GetAll";
 }
 
+@*خلي بالك ان كدا هنا مكان ال  
+    div
+    هيفضل موجود دايما حتي لو الي راجع ليه
+    null 
+
+
+<div class="m-3 alert alert-info">
+    <p>
+        @TempData["Message"]
+    </p>
+</div>
+
+هروح اعمل فحص بسيط علشان اشوف هل في معلومات جايه ليا ولا لا 
+*@
+
+@* // in this step we should make casting *@
+@if(!string.IsNullOrEmpty(TempData["Message"] as string)){
+    <div class="m-3 alert alert-info">
+        <p>
+            @TempData["Message"]
+        </p>
+    </div>
+}
+
+@if(!string.IsNullOrEmpty(TempData["EditEmployee"] as string)){
+    <div class="m-3 alert alert-info">
+        <p>@TempData["EditEmployee"]</p>
+    </div>
+}
+
+
 <h1>All Employees</h1>
 <br />
 <br />

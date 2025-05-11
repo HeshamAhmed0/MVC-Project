@@ -47,6 +47,13 @@ namespace Company.hesham.PL.Controllers
                int result =employeeReposatory.Add(employee);
                 if (result > 0)
                 {
+                    //Life Time Of This Property For One Request
+                    //ViewData["Message"] = "Hello in ViewData";
+
+                    //ViewBag.Message = "Hellow in viewBag";
+
+                    // This Send This Date From Request For View Create To View GetAll
+                    TempData["Message"] = "Employee Create Success ";
                     return RedirectToAction("GetAll");
                 }
             }
@@ -93,6 +100,7 @@ namespace Company.hesham.PL.Controllers
              int result= employeeReposatory.Update(employee);
             if (result > 0)
             {
+                TempData["EditEmployee"] = "Employe Edis Success";
                 return RedirectToAction("GetAll");
             }
             return View();
