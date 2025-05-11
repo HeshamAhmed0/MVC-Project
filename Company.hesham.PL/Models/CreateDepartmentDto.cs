@@ -10,5 +10,7 @@ namespace Company.hesham.PL.Models
         public string Name { get; set; }
         [Required(ErrorMessage = "Date is Nessesary")]
         public DateTime CreatenIn { get; set; }
+
+       
     }
 }

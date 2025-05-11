@@ -11,6 +11,8 @@ namespace Company.hesham.DAL.Models
     {
         [Required(ErrorMessage ="InVaild Code")]
         public int Code { get; set; }
+
+        public IEnumerable<Employee> Employees { get; set; }
  
 
     }

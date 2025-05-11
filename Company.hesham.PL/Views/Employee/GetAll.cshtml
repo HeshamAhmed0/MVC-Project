@@ -2,7 +2,9 @@
 @{
     ViewData["Title"] = "GetAll";
 }
-
+@{
+    var departments = ViewData["department"];
+}
 @*خلي بالك ان كدا هنا مكان ال  
     div
     هيفضل موجود دايما حتي لو الي راجع ليه
@@ -51,9 +53,11 @@
             <th>IsDeleted</th>
             <th>Hiring Date</th>
             <th>CreateAt</th>
+            <th>Department</th>
             <th>Details</th>
             <th>Update</th>
             <th>Delete</th>
+           
         </thead>
         <tbody>
             @foreach (var item in Model)
@@ -69,6 +73,7 @@
                     <td>@item.IsDeleted</td>
                     <td>@item.HiringDate</td>
                     <td>@item.CreateAt</td>
+                    <td>@item.Department?.Name</td>
                     <partial name="ButtonPartialView" model="@item.Id"></partial>
                 </tr>
                 }

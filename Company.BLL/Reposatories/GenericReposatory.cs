@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Company.BLL.Interfaces;
 using Company.hesham.DAL.Data.DbContexts;
 using Company.hesham.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.BLL.Reposatories
 {
@@ -31,11 +32,19 @@ namespace Company.BLL.Reposatories
 
         public IEnumerable<T> GetAll()
         {
+            if (typeof(T)==typeof(Employee))
+            {
+                return (IEnumerable < T >) _companyDbcontext.Employees.Include(D=>D.Department).ToList();
+            }
             return _companyDbcontext.Set<T>().ToList();
         }
 
         public T? GetById(int id)
         {
+            if (typeof(T) == typeof(Employee))
+            {
+                return _companyDbcontext.Employees.Include(D => D.Department).FirstOrDefault(I => I.Id==id) as T;
+            }
             return _companyDbcontext.Set<T>().Find(id);
 
         }
