@@ -18,12 +18,20 @@ namespace Company.hesham.PL.Controllers
             _depatmenReposatory = depatmenReposatory;
         }
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(string? SearchInput)
         {
-          var model =employeeReposatory.GetAll();
-            var department = _depatmenReposatory.GetAll();
-            ViewData["department"] = department;
-            return View(model);
+            IEnumerable<Employee> model;
+            if (string.IsNullOrEmpty(SearchInput))
+            {
+                 model = employeeReposatory.GetAll();
+                var department = _depatmenReposatory.GetAll();
+                ViewData["department"] = department;
+                return View(model);
+            }else {
+                 model = employeeReposatory.GetByName(SearchInput);
+                return View(model);
+            }
+         
         }
         [HttpGet]
         public IActionResult Create()
@@ -32,6 +40,7 @@ namespace Company.hesham.PL.Controllers
             ViewData["department"]=department;
             return View();
         }
+        
         [HttpPost]
         public IActionResult Create(UpdateEmployeeDto updateEmployeeDto)
         {

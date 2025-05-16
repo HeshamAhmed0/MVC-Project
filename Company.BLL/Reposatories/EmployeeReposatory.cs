@@ -6,14 +6,22 @@ using System.Threading.Tasks;
 using Company.BLL.Interfaces;
 using Company.hesham.DAL.Data.DbContexts;
 using Company.hesham.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.BLL.Reposatories
 {
     public class EmployeeReposatory : GenericReposatory<Employee>, IEmployeeReposatorycs
     {
+        private readonly CompanyDbContext companyDbContext;
+
         public EmployeeReposatory(CompanyDbContext companyDbContext):base(companyDbContext) 
         {
+            this.companyDbContext = companyDbContext;
+        }
 
+        public List<Employee> GetByName(string Name)
+        {
+           return companyDbContext.Employees.Include(D => D.Department).Where(N => N.Name.Contains(Name)).ToList();
         }
 
         //private readonly CompanyDbContext _dbContext;
