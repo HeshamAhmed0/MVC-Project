@@ -10,5 +10,6 @@ namespace Company.BLL.Interfaces
     {
         public IDepatmenReposatory depatmenReposatory { get; }
         public IEmployeeReposatorycs employeeReposatory { get; }
+        public int Complete();
     }
 }
