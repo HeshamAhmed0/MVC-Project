@@ -9,6 +9,6 @@ namespace Company.BLL.Interfaces
 {
     public interface IDepatmenReposatory :IGenericReposatory<Department>
     {
-      
+        public List<Department> GetDepartmentsByName(string? Name);
     }
 }

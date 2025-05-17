@@ -11,7 +11,19 @@ namespace Company.BLL.Reposatories
 {
     public class DepartmentReposatory : GenericReposatory<Department> , IDepatmenReposatory
     {
-        public DepartmentReposatory(CompanyDbContext context):base(context) { }
+        private readonly CompanyDbContext _context;
+
+        public DepartmentReposatory(CompanyDbContext context):base(context)
+        {
+            _context = context;
+        }
+
+        public List<Department> GetDepartmentsByName(string? Name)
+        {
+           return  _context.Departments.Where(N => N.Name == Name).ToList();
+        }
+
+
         //private readonly CompanyDbContext _dbContext;
         //public DepartmentReposatory(CompanyDbContext companyDbContext)
         //{

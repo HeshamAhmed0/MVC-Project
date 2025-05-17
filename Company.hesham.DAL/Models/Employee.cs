@@ -22,6 +22,7 @@ namespace Company.hesham.DAL.Models
 
         public int? DepartmentId { get; set; }
         public Department Department { get; set; }
+        public string? ImgName { get; set; }
       
     }
 }

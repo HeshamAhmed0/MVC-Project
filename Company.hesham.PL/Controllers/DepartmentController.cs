@@ -1,4 +1,5 @@
-﻿using Company.BLL.Interfaces;
+﻿using AutoMapper;
+using Company.BLL.Interfaces;
 using Company.BLL.Reposatories;
 using Company.hesham.DAL.Models;
 using Company.hesham.PL.Models;
@@ -8,16 +9,31 @@ namespace Company.hesham.PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepatmenReposatory _departmentReposatory;
-        public DepartmentController(IDepatmenReposatory departmentReposatory)
+        private readonly IUnionOfWork _unionOfWork;
+
+        //private readonly IDepatmenReposatory _departmentReposatory;
+        private readonly IMapper _mapper;
+
+        public DepartmentController(IUnionOfWork unionOfWork,IMapper mapper)
         {
-            _departmentReposatory = departmentReposatory;
+            _unionOfWork = unionOfWork;
+            //_departmentReposatory = departmentReposatory;
+            _mapper = mapper;
         }
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll(string? SearchInput)
         {
-            var model = _departmentReposatory.GetAll();
-            return View(model);
+            if (string.IsNullOrEmpty(SearchInput))
+            {
+                var model = _unionOfWork.depatmenReposatory.GetAll();
+                return View(model);
+            }
+            else
+            {
+                var model = _unionOfWork.depatmenReposatory.GetDepartmentsByName(SearchInput);
+                return View(model);
+            }
+           
         }
         [HttpGet]
        public IActionResult Create()
@@ -31,13 +47,14 @@ namespace Company.hesham.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                Department department = new Department()
-                {
-                    Code = model.Code,
-                    Name = model.Name,
-                    CreateAt = model.CreatenIn,
-                };
-               int result= _departmentReposatory.Add(department);
+                //Department department = new Department()
+                //{
+                //    Code = model.Code,
+                //    Name = model.Name,
+                //    CreateAt = model.CreatenIn,
+                //};
+                var department = _mapper.Map<Department>(model);
+               int result= _unionOfWork.depatmenReposatory.Add(department);
                 if (result > 0)
                 {
                     return RedirectToAction("GetAll");
@@ -52,18 +69,17 @@ namespace Company.hesham.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var department = _departmentReposatory.GetById(id.Value);
+            var department = _unionOfWork.depatmenReposatory.GetById(id.Value);
             if (department is null) return NotFound("Department Not Found");
-           
-            
-            return View(viewname,department);
+            var DeleteDepartmentDto = _mapper.Map<DeleteDepartmentDto>(department);
+            return View(viewname,DeleteDepartmentDto);
             
         }
         [HttpGet]
         public IActionResult Edit(int? id)
         {
             if (id is null) return BadRequest("InValid Id");
-            var department = _departmentReposatory.GetById(id.Value);
+            var department = _unionOfWork.depatmenReposatory.GetById(id.Value);
             if (department is null) return NotFound("Department Not Found");
 
             CreateDepartmentDto createDepartmentDto = new CreateDepartmentDto()
@@ -80,22 +96,24 @@ namespace Company.hesham.PL.Controllers
         {
             if (ModelState.IsValid)
             {
-                Department department = new Department()
-                {
-                    Id=id,
-                    Name=_department.Name,
-                    Code=_department.Code,
-                    CreateAt=_department.CreatenIn,
-                };
+                //    Department department = new Department()
+                //    {
+                //        Id=id,
+                //        Name=_department.Name,
+                //        Code=_department.Code,
+                //        CreateAt=_department.CreatenIn,
+                //    };
 
-                int result = _departmentReposatory.Update(department);
+               var department= _mapper.Map<Department>(_department);
+                department.Id = id;
+                int result = _unionOfWork.depatmenReposatory.Update(department);
                 if (result > 0)
                 {
                     return RedirectToAction("GetAll");
                 }
 
             }
-            return View(_department);
+            return View();
         }
 
         /// This is not Perfect Casting
@@ -123,25 +141,27 @@ namespace Company.hesham.PL.Controllers
         [HttpGet]
         public IActionResult Delete(int? id)
         {
-            //if (id is null) return BadRequest("Invalid Id");
+            if (id is null) return BadRequest("Invalid Id");
 
-            //var department = _departmentReposatory.GetById(id.Value);
-            //if (department is null) return NotFound();
-            return Details(id,"Delete");
+            var department = _unionOfWork.depatmenReposatory.GetById(id.Value);
+            if (department is null) return NotFound();
+            var DeleteDepartmentDto = _mapper.Map<DeleteDepartmentDto>(department);
+           return View(DeleteDepartmentDto);
         }
         [HttpPost]
-        public IActionResult Delete([FromRoute] int id , Department department)
+        public IActionResult Delete([FromRoute] int id , DeleteDepartmentDto _department)
         {
            if(ModelState.IsValid)
             {
+                var department = _mapper.Map<Department>(_department);
                 if (id != department.Id) return BadRequest("InValid Id");
-                int Result = _departmentReposatory.Delete(department);
+                int Result = _unionOfWork.depatmenReposatory.Delete(department);
                 if (Result > 0)
                 {
                     return RedirectToAction(nameof(GetAll));
                 }
             }
-           return View(department);
+           return View();
         }
     }
 }

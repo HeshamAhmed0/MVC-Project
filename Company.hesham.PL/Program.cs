@@ -1,6 +1,9 @@
+using Company.BLL;
 using Company.BLL.Interfaces;
 using Company.BLL.Reposatories;
 using Company.hesham.DAL.Data.DbContexts;
+using Company.hesham.PL.Mapping.DepartmentMapping;
+using Company.hesham.PL.Mapping.EmployeeMapping;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.hesham.PL
@@ -13,8 +16,13 @@ namespace Company.hesham.PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddScoped<IDepatmenReposatory,DepartmentReposatory>();
-            builder.Services.AddScoped<IEmployeeReposatorycs,EmployeeReposatory>(); //Allow Dependancy injection For EmployeeReposatory
+            //builder.Services.AddScoped<IDepatmenReposatory,DepartmentReposatory>();
+            //builder.Services.AddScoped<IEmployeeReposatorycs,EmployeeReposatory>(); //Allow Dependancy injection For EmployeeReposatory
+            builder.Services.AddScoped<IUnionOfWork, UnionOWork>();
+            builder.Services.AddAutoMapper(typeof(EmployeeToCreateEmployee));
+            builder.Services.AddAutoMapper(typeof(EmployeeToEditEmployee));
+            builder.Services.AddAutoMapper(typeof(CreateDepartmentDtoToDepartmen));
+            builder.Services.AddAutoMapper(typeof(DeleteDepartmentDtoToDepartment));
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
