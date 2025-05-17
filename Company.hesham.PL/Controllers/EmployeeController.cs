@@ -3,6 +3,7 @@ using Company.BLL.Interfaces;
 using Company.BLL.Reposatories;
 using Company.hesham.DAL.Data.DbContexts;
 using Company.hesham.DAL.Models;
+using Company.hesham.PL.Helping;
 using Company.hesham.PL.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -67,10 +68,17 @@ namespace Company.hesham.PL.Controllers
                 //    salary = updateEmployeeDto.salary,
                 //    DepartmentId = updateEmployeeDto.DepartmentId,
                 //};
-                var employee=_mapper.Map<Employee>(updateEmployeeDto);
-               int result = _unionOfWork.employeeReposatory.Add(employee);
+                if (updateEmployeeDto.Image is not null)
+                {
+                    updateEmployeeDto.ImgName = DocumentSetting.Upload(updateEmployeeDto.Image, "Images");
+                }
+
+                var employee =_mapper.Map<Employee>(updateEmployeeDto);
+               _unionOfWork.employeeReposatory.Add(employee);
+                int result = _unionOfWork.Complete();
                 if (result > 0)
                 {
+                    
                     //Life Time Of This Property For One Request
                     //ViewData["Message"] = "Hello in ViewData";
 
@@ -144,7 +152,9 @@ namespace Company.hesham.PL.Controllers
             //};
             var employee=_mapper.Map<Employee>(updateEmployeeDto);
             if (id != employee.Id) return NotFound();
-             int result= _unionOfWork.employeeReposatory.Update(employee);
+              _unionOfWork.employeeReposatory.Update(employee);
+            int result = _unionOfWork.Complete();
+
             if (result > 0)
             {
                 TempData["EditEmployee"] = "Employe Edis Success";
@@ -163,7 +173,9 @@ namespace Company.hesham.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
             if (id != employee.Id) return NotFound();
-            var result = _unionOfWork.employeeReposatory.Delete(employee);
+             _unionOfWork.employeeReposatory.Delete(employee);
+            int result = _unionOfWork.Complete();
+
             if (result > 0)
             {
                 return RedirectToAction("GetAll");

@@ -54,8 +54,10 @@ namespace Company.hesham.PL.Controllers
                 //    CreateAt = model.CreatenIn,
                 //};
                 var department = _mapper.Map<Department>(model);
-               int result= _unionOfWork.depatmenReposatory.Add(department);
-                if (result > 0)
+               _unionOfWork.depatmenReposatory.Add(department);
+                int Result = _unionOfWork.Complete();
+
+                if (Result > 0)
                 {
                     return RedirectToAction("GetAll");
                 }
@@ -106,8 +108,10 @@ namespace Company.hesham.PL.Controllers
 
                var department= _mapper.Map<Department>(_department);
                 department.Id = id;
-                int result = _unionOfWork.depatmenReposatory.Update(department);
-                if (result > 0)
+                 _unionOfWork.depatmenReposatory.Update(department);
+                int Result = _unionOfWork.Complete();
+
+                if (Result > 0)
                 {
                     return RedirectToAction("GetAll");
                 }
@@ -155,7 +159,9 @@ namespace Company.hesham.PL.Controllers
             {
                 var department = _mapper.Map<Department>(_department);
                 if (id != department.Id) return BadRequest("InValid Id");
-                int Result = _unionOfWork.depatmenReposatory.Delete(department);
+                 _unionOfWork.depatmenReposatory.Delete(department);
+                int Result = _unionOfWork.Complete();
+
                 if (Result > 0)
                 {
                     return RedirectToAction(nameof(GetAll));

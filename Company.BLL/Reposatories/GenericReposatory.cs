@@ -18,16 +18,16 @@ namespace Company.BLL.Reposatories
         {
             _companyDbcontext = companyDbcontext;
         }
-        public int Add(T t)
+        public void Add(T t)
         {
            _companyDbcontext.Set<T>().Add(t);
-            return _companyDbcontext.SaveChanges();
+        
         }
 
-        public int Delete(T t)
+        public void Delete(T t)
         {
             _companyDbcontext.Set<T>().Remove(t);
-            return _companyDbcontext.SaveChanges();
+          
         }
 
         public IEnumerable<T> GetAll()
@@ -49,10 +49,10 @@ namespace Company.BLL.Reposatories
 
         }
 
-        public int Update(T t)
+        public void Update(T t)
         {
          _companyDbcontext.Set<T>().Update(t);
-            return _companyDbcontext.SaveChanges();
+           
         }
     }
 }
