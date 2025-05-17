@@ -1,4 +1,5 @@
-﻿using Company.BLL.Interfaces;
+﻿using AutoMapper;
+using Company.BLL.Interfaces;
 using Company.BLL.Reposatories;
 using Company.hesham.DAL.Data.DbContexts;
 using Company.hesham.DAL.Models;
@@ -9,13 +10,18 @@ namespace Company.hesham.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeReposatorycs employeeReposatory;
-        private readonly IDepatmenReposatory _depatmenReposatory;
+        private readonly IUnionOfWork _unionOfWork;
 
-        public EmployeeController(IEmployeeReposatorycs _employeeReposatory,IDepatmenReposatory depatmenReposatory)
+        //private readonly IEmployeeReposatorycs employeeReposatory;
+        //private readonly IDepatmenReposatory _depatmenReposatory;
+        private readonly IMapper _mapper;
+
+        public EmployeeController(IUnionOfWork unionOfWork, IMapper mapper)
         {
-            employeeReposatory = _employeeReposatory;
-            _depatmenReposatory = depatmenReposatory;
+            //employeeReposatory = _employeeReposatory;
+            //_depatmenReposatory = depatmenReposatory;
+             _unionOfWork = unionOfWork;
+            _mapper = mapper;
         }
         [HttpGet]
         public IActionResult GetAll(string? SearchInput)
@@ -23,12 +29,12 @@ namespace Company.hesham.PL.Controllers
             IEnumerable<Employee> model;
             if (string.IsNullOrEmpty(SearchInput))
             {
-                 model = employeeReposatory.GetAll();
-                var department = _depatmenReposatory.GetAll();
+                 model = _unionOfWork.employeeReposatory.GetAll();
+                var department = _unionOfWork.depatmenReposatory.GetAll();
                 ViewData["department"] = department;
                 return View(model);
             }else {
-                 model = employeeReposatory.GetByName(SearchInput);
+                 model = _unionOfWork.employeeReposatory.GetByName(SearchInput);
                 return View(model);
             }
          
@@ -36,7 +42,7 @@ namespace Company.hesham.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var department = _depatmenReposatory.GetAll();
+            var department = _unionOfWork.depatmenReposatory.GetAll();
             ViewData["department"]=department;
             return View();
         }
@@ -47,21 +53,22 @@ namespace Company.hesham.PL.Controllers
             if (ModelState.IsValid)
             {
 
-                Employee employee = new Employee()
-                {
-                    Name = updateEmployeeDto.Name,
-                    HiringDate = updateEmployeeDto.HiringDate,
-                    Address = updateEmployeeDto.Address,
-                    Age = updateEmployeeDto.Age,
-                    CreateAt = updateEmployeeDto.CreateAt,
-                    Email = updateEmployeeDto.Email,
-                    IsActive = updateEmployeeDto.IsActive,
-                    IsDeleted = updateEmployeeDto.IsDeleted,
-                    Phone = updateEmployeeDto.Phone,
-                    salary = updateEmployeeDto.salary,
-                    DepartmentId = updateEmployeeDto.DepartmentId,
-                };
-               int result =employeeReposatory.Add(employee);
+                //Employee employee = new Employee()
+                //{
+                //    Name = updateEmployeeDto.Name,
+                //    HiringDate = updateEmployeeDto.HiringDate,
+                //    Address = updateEmployeeDto.Address,
+                //    Age = updateEmployeeDto.Age,
+                //    CreateAt = updateEmployeeDto.CreateAt,
+                //    Email = updateEmployeeDto.Email,
+                //    IsActive = updateEmployeeDto.IsActive,
+                //    IsDeleted = updateEmployeeDto.IsDeleted,
+                //    Phone = updateEmployeeDto.Phone,
+                //    salary = updateEmployeeDto.salary,
+                //    DepartmentId = updateEmployeeDto.DepartmentId,
+                //};
+                var employee=_mapper.Map<Employee>(updateEmployeeDto);
+               int result = _unionOfWork.employeeReposatory.Add(employee);
                 if (result > 0)
                 {
                     //Life Time Of This Property For One Request
@@ -82,7 +89,7 @@ namespace Company.hesham.PL.Controllers
         public IActionResult Details(int? id,string viewName="Details")
         {
             if (id is null) return BadRequest("InValid Id");
-            var employee = employeeReposatory.GetById(id.Value);
+            var employee = _unionOfWork.employeeReposatory.GetById(id.Value);
             if (employee is null) return NotFound("Employee Not Found");
             else
             {
@@ -93,48 +100,51 @@ namespace Company.hesham.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? id)
         {
-            var department = _depatmenReposatory.GetAll();
+            var department = _unionOfWork.depatmenReposatory.GetAll();
             ViewData["department"] = department;
             if (id is null) return NotFound();
-            var employee = employeeReposatory.GetById(id.Value);
-            UpdateEmployeeDto updateEmployeeDto = new UpdateEmployeeDto()
-            {
-                Name=employee.Name,
-                DepartmentId=employee.DepartmentId,
-                HiringDate=employee.HiringDate,
-                IsDeleted=employee.IsDeleted,
-                Email=employee.Email,
-               Address=employee.Address,
-               Age=employee.Age,
-               CreateAt=employee.CreateAt,
-               IsActive=employee.IsActive,
-               Phone=employee.Phone,
-               salary=employee.salary,
+            var employee = _unionOfWork.employeeReposatory.GetById(id.Value);
+            //UpdateEmployeeDto updateEmployeeDto = new UpdateEmployeeDto()
+            //{
+            //    Name=employee.Name,
+            //    DepartmentId=employee.DepartmentId,
+            //    HiringDate=employee.HiringDate,
+            //    IsDeleted=employee.IsDeleted,
+            //    Email=employee.Email,
+            //   Address=employee.Address,
+            //   Age=employee.Age,
+            //   CreateAt=employee.CreateAt,
+            //   IsActive=employee.IsActive,
+            //   Phone=employee.Phone,
+            //   salary=employee.salary,
 
-            };
+            //};
+            
+            var updateEmployeeDto=_mapper.Map<UpdateEmployeeDto>(employee);
             return View(updateEmployeeDto);
         }
         [HttpPost]
         public IActionResult Edit(int? id,Employee updateEmployeeDto)
         {
             if (id is null) return BadRequest("InValid Id");
-            Employee employee = new Employee()
-            {
-                Id = id.Value,
-                Name = updateEmployeeDto.Name,
-                Address = updateEmployeeDto.Address,
-                HiringDate = updateEmployeeDto.HiringDate,
-                Age = updateEmployeeDto.Age,
-                CreateAt=updateEmployeeDto.CreateAt,
-                Email = updateEmployeeDto.Email,
-                IsDeleted = updateEmployeeDto.IsDeleted,
-                IsActive = updateEmployeeDto.IsActive,
-                Phone = updateEmployeeDto.Phone,
-                salary=updateEmployeeDto.salary,
-                DepartmentId = updateEmployeeDto.DepartmentId,
-            };
+            //Employee employee = new Employee()
+            //{
+            //    Id = id.Value,
+            //    Name = updateEmployeeDto.Name,
+            //    Address = updateEmployeeDto.Address,
+            //    HiringDate = updateEmployeeDto.HiringDate,
+            //    Age = updateEmployeeDto.Age,
+            //    CreateAt=updateEmployeeDto.CreateAt,
+            //    Email = updateEmployeeDto.Email,
+            //    IsDeleted = updateEmployeeDto.IsDeleted,
+            //    IsActive = updateEmployeeDto.IsActive,
+            //    Phone = updateEmployeeDto.Phone,
+            //    salary=updateEmployeeDto.salary,
+            //    DepartmentId = updateEmployeeDto.DepartmentId,
+            //};
+            var employee=_mapper.Map<Employee>(updateEmployeeDto);
             if (id != employee.Id) return NotFound();
-             int result= employeeReposatory.Update(employee);
+             int result= _unionOfWork.employeeReposatory.Update(employee);
             if (result > 0)
             {
                 TempData["EditEmployee"] = "Employe Edis Success";
@@ -153,7 +163,7 @@ namespace Company.hesham.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id");
             if (id != employee.Id) return NotFound();
-            var result = employeeReposatory.Delete(employee);
+            var result = _unionOfWork.employeeReposatory.Delete(employee);
             if (result > 0)
             {
                 return RedirectToAction("GetAll");
