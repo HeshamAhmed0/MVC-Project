@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Company.BLL.Interfaces;
 using Company.hesham.DAL.Data.DbContexts;
 using Company.hesham.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.BLL.Reposatories
 {
@@ -18,9 +19,9 @@ namespace Company.BLL.Reposatories
             _context = context;
         }
 
-        public List<Department> GetDepartmentsByName(string? Name)
+        public async Task<List<Department> > GetDepartmentsByNameAsync(string? Name)
         {
-           return  _context.Departments.Where(N => N.Name == Name).ToList();
+           return  await _context.Departments.Where(N => N.Name == Name).ToListAsync();
         }
 
 

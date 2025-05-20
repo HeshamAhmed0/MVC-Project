@@ -23,7 +23,7 @@ namespace Company.BLL
             depatmenReposatory = new DepartmentReposatory(_companyDbContext);
             employeeReposatory = new EmployeeReposatory(_companyDbContext);
         }
-        public int Complete()
+        public async Task<int> Complete()
         {
             return _companyDbContext.SaveChanges();
         }
