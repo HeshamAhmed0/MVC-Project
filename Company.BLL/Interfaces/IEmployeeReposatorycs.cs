@@ -9,6 +9,6 @@ namespace Company.BLL.Interfaces
 {
     public interface IEmployeeReposatorycs :IGenericReposatory<Employee>
     {
-        public List<Employee> GetByName(string Name);
+        public Task<List<Employee>> GetByNameAsync(string Name);
     }
 }

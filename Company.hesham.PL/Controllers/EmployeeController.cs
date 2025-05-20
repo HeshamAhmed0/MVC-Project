@@ -25,31 +25,31 @@ namespace Company.hesham.PL.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public IActionResult GetAll(string? SearchInput)
+        public async Task<IActionResult> GetAll(string? SearchInput)
         {
             IEnumerable<Employee> model;
             if (string.IsNullOrEmpty(SearchInput))
             {
-                 model = _unionOfWork.employeeReposatory.GetAll();
-                var department = _unionOfWork.depatmenReposatory.GetAll();
+                 model =await _unionOfWork.employeeReposatory.GetAllAsync();
+                var department =await _unionOfWork.depatmenReposatory.GetAllAsync();
                 ViewData["department"] = department;
                 return View(model);
             }else {
-                 model = _unionOfWork.employeeReposatory.GetByName(SearchInput);
+                 model =await _unionOfWork.employeeReposatory.GetByNameAsync(SearchInput);
                 return View(model);
             }
          
         }
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var department = _unionOfWork.depatmenReposatory.GetAll();
+            var department =await _unionOfWork.depatmenReposatory.GetAllAsync();
             ViewData["department"]=department;
             return View();
         }
         
         [HttpPost]
-        public IActionResult Create(UpdateEmployeeDto updateEmployeeDto)
+        public async Task<IActionResult> Create(UpdateEmployeeDto updateEmployeeDto)
         {
             if (ModelState.IsValid)
             {
@@ -75,7 +75,7 @@ namespace Company.hesham.PL.Controllers
 
                 var employee =_mapper.Map<Employee>(updateEmployeeDto);
                _unionOfWork.employeeReposatory.Add(employee);
-                int result = _unionOfWork.Complete();
+                int result =await _unionOfWork.Complete();
                 if (result > 0)
                 {
                     
@@ -94,10 +94,11 @@ namespace Company.hesham.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? id,string viewName="Details")
+        public async Task<IActionResult> Details(int? id,string viewName="Details")
         {
+
             if (id is null) return BadRequest("InValid Id");
-            var employee = _unionOfWork.employeeReposatory.GetById(id.Value);
+            var employee =await _unionOfWork.employeeReposatory.GetByIdAsync(id.Value);
             if (employee is null) return NotFound("Employee Not Found");
             else
             {
@@ -106,12 +107,12 @@ namespace Company.hesham.PL.Controllers
             
         }
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            var department = _unionOfWork.depatmenReposatory.GetAll();
+            var department =await _unionOfWork.depatmenReposatory.GetAllAsync();
             ViewData["department"] = department;
             if (id is null) return NotFound();
-            var employee = _unionOfWork.employeeReposatory.GetById(id.Value);
+            var employee = _unionOfWork.employeeReposatory.GetByIdAsync(id.Value);
             //UpdateEmployeeDto updateEmployeeDto = new UpdateEmployeeDto()
             //{
             //    Name=employee.Name,
@@ -132,9 +133,19 @@ namespace Company.hesham.PL.Controllers
             return View(updateEmployeeDto);
         }
         [HttpPost]
-        public IActionResult Edit(int? id,Employee updateEmployeeDto)
+        public async Task<IActionResult> Edit(int? id,UpdateEmployeeDto updateEmployeeDto)
         {
             if (id is null) return BadRequest("InValid Id");
+            if(updateEmployeeDto.ImgName is not null && updateEmployeeDto.Image is not null)
+            {
+                DocumentSetting.Delete(updateEmployeeDto.ImgName, "Images");
+            }
+            if (updateEmployeeDto.Image is not null)
+            {
+                DocumentSetting.Upload(updateEmployeeDto.Image, "Images");
+
+            }
+
             //Employee employee = new Employee()
             //{
             //    Id = id.Value,
@@ -151,9 +162,10 @@ namespace Company.hesham.PL.Controllers
             //    DepartmentId = updateEmployeeDto.DepartmentId,
             //};
             var employee=_mapper.Map<Employee>(updateEmployeeDto);
-            if (id != employee.Id) return NotFound();
+            if (id is null) return NotFound();
+            employee.Id = id.Value;
               _unionOfWork.employeeReposatory.Update(employee);
-            int result = _unionOfWork.Complete();
+            int result =await _unionOfWork.Complete();
 
             if (result > 0)
             {
@@ -164,20 +176,27 @@ namespace Company.hesham.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int?id )
+        public async Task<IActionResult> Delete(int?id )
         {
-            return Details(id,"Delete");
+            return await Details(id,"Delete");
         }
         [HttpPost]
-        public IActionResult Delete([FromRoute]int?id ,Employee employee)
+        public async Task<IActionResult> Delete([FromRoute]int?id ,Employee employee)
         {
             if (id is null) return BadRequest("Invalid Id");
-            if (id != employee.Id) return NotFound();
-             _unionOfWork.employeeReposatory.Delete(employee);
-            int result = _unionOfWork.Complete();
+            employee.Id = id.Value;
+            var Emp =await _unionOfWork.employeeReposatory.GetByIdAsync(id.Value);
+            if (Emp is null) return NotFound();
+             _unionOfWork.employeeReposatory.Delete(Emp);
+            int result =await _unionOfWork.Complete();
 
             if (result > 0)
             {
+                if (employee.ImgName is not null )
+                {
+                    DocumentSetting.Delete(employee.ImgName, "Images");
+
+                }
                 return RedirectToAction("GetAll");
             }
             return View();

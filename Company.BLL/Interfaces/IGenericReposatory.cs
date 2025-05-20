@@ -9,8 +9,8 @@ namespace Company.BLL.Interfaces
 {
     public interface IGenericReposatory<T> where T :BaseEntity
     {
-        IEnumerable<T> GetAll();
-        T? GetById(int id);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T?> GetByIdAsync(int id);
         void Add(T t);
         void Update(T t);
         void Delete(T t);

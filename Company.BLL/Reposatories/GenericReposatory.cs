@@ -30,20 +30,21 @@ namespace Company.BLL.Reposatories
           
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
             if (typeof(T)==typeof(Employee))
             {
-                return (IEnumerable < T >) _companyDbcontext.Employees.Include(D=>D.Department).ToList();
+                var result= await  _companyDbcontext.Employees.Include(D=>D.Department).ToListAsync();
+                return result.Cast<T>();
             }
-            return _companyDbcontext.Set<T>().ToList();
+            return await _companyDbcontext.Set<T>().ToListAsync();
         }
 
-        public T? GetById(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             if (typeof(T) == typeof(Employee))
             {
-                return _companyDbcontext.Employees.Include(D => D.Department).FirstOrDefault(I => I.Id==id) as T;
+                return await _companyDbcontext.Employees.Include(D => D.Department).FirstOrDefaultAsync(I => I.Id==id) as T;
             }
             return _companyDbcontext.Set<T>().Find(id);
 

@@ -5,7 +5,8 @@
 
 <h1>Delete Employee</h1>
 <form asp-action="Delete">
-    <partial name="EmployeePartialView\DetailsDeletePartialView"></partial>
+    <partial name="EmployeePartialView/DetailsDeletePartialView"></partial>
+    <input  asp-for="ImgName" hidden/>
     <div class="my-3">
         <input type="submit" value="Delete" class="btn btn-danger" />
         <a asp-action="GetAll" asp-controller="Employee" class="btn btn-secondary">Back To List</a>

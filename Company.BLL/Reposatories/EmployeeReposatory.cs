@@ -19,9 +19,9 @@ namespace Company.BLL.Reposatories
             this.companyDbContext = companyDbContext;
         }
 
-        public List<Employee> GetByName(string Name)
+        public async Task<List<Employee>> GetByNameAsync(string Name)
         {
-           return companyDbContext.Employees.Include(D => D.Department).Where(N => N.Name.Contains(Name)).ToList();
+           return await companyDbContext.Employees.Include(D => D.Department).Where(N => N.Name.Contains(Name)).ToListAsync();
         }
 
         //private readonly CompanyDbContext _dbContext;

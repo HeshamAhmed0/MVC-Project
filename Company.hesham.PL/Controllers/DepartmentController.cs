@@ -21,16 +21,16 @@ namespace Company.hesham.PL.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public IActionResult GetAll(string? SearchInput)
+        public async Task<IActionResult> GetAll(string? SearchInput)
         {
             if (string.IsNullOrEmpty(SearchInput))
             {
-                var model = _unionOfWork.depatmenReposatory.GetAll();
+                var model =await _unionOfWork.depatmenReposatory.GetAllAsync();
                 return View(model);
             }
             else
             {
-                var model = _unionOfWork.depatmenReposatory.GetDepartmentsByName(SearchInput);
+                var model =await _unionOfWork.depatmenReposatory.GetDepartmentsByNameAsync(SearchInput);
                 return View(model);
             }
            
@@ -43,7 +43,7 @@ namespace Company.hesham.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateDepartmentDto model)
+        public async Task<IActionResult> Create(CreateDepartmentDto model)
         {
             if (ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace Company.hesham.PL.Controllers
                 //};
                 var department = _mapper.Map<Department>(model);
                _unionOfWork.depatmenReposatory.Add(department);
-                int Result = _unionOfWork.Complete();
+                int Result =await _unionOfWork.Complete();
 
                 if (Result > 0)
                 {
@@ -67,21 +67,21 @@ namespace Company.hesham.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? id ,string viewname ="Details")
+        public async Task<IActionResult> Details(int? id ,string viewname ="Details")
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var department = _unionOfWork.depatmenReposatory.GetById(id.Value);
+            var department =await _unionOfWork.depatmenReposatory.GetByIdAsync(id.Value);
             if (department is null) return NotFound("Department Not Found");
             var DeleteDepartmentDto = _mapper.Map<DeleteDepartmentDto>(department);
             return View(viewname,DeleteDepartmentDto);
             
         }
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id is null) return BadRequest("InValid Id");
-            var department = _unionOfWork.depatmenReposatory.GetById(id.Value);
+            var department =await _unionOfWork.depatmenReposatory.GetByIdAsync(id.Value);
             if (department is null) return NotFound("Department Not Found");
 
             CreateDepartmentDto createDepartmentDto = new CreateDepartmentDto()
@@ -94,7 +94,7 @@ namespace Company.hesham.PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id,CreateDepartmentDto _department)
+        public async Task<IActionResult> Edit([FromRoute] int id,CreateDepartmentDto _department)
         {
             if (ModelState.IsValid)
             {
@@ -109,7 +109,7 @@ namespace Company.hesham.PL.Controllers
                var department= _mapper.Map<Department>(_department);
                 department.Id = id;
                  _unionOfWork.depatmenReposatory.Update(department);
-                int Result = _unionOfWork.Complete();
+                int Result =await _unionOfWork.Complete();
 
                 if (Result > 0)
                 {
@@ -143,24 +143,24 @@ namespace Company.hesham.PL.Controllers
         //    return View(department);
         //}
         [HttpGet]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id is null) return BadRequest("Invalid Id");
 
-            var department = _unionOfWork.depatmenReposatory.GetById(id.Value);
+            var department =await _unionOfWork.depatmenReposatory.GetByIdAsync(id.Value);
             if (department is null) return NotFound();
             var DeleteDepartmentDto = _mapper.Map<DeleteDepartmentDto>(department);
            return View(DeleteDepartmentDto);
         }
         [HttpPost]
-        public IActionResult Delete([FromRoute] int id , DeleteDepartmentDto _department)
+        public async Task<IActionResult> Delete([FromRoute] int id , DeleteDepartmentDto _department)
         {
            if(ModelState.IsValid)
             {
                 var department = _mapper.Map<Department>(_department);
                 if (id != department.Id) return BadRequest("InValid Id");
                  _unionOfWork.depatmenReposatory.Delete(department);
-                int Result = _unionOfWork.Complete();
+                int Result =await _unionOfWork.Complete();
 
                 if (Result > 0)
                 {
