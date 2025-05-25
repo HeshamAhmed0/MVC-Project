@@ -2,8 +2,10 @@ using Company.BLL;
 using Company.BLL.Interfaces;
 using Company.BLL.Reposatories;
 using Company.hesham.DAL.Data.DbContexts;
+using Company.hesham.DAL.Models;
 using Company.hesham.PL.Mapping.DepartmentMapping;
 using Company.hesham.PL.Mapping.EmployeeMapping;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.hesham.PL
@@ -27,6 +29,9 @@ namespace Company.hesham.PL
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                            .AddEntityFrameworkStores<CompanyDbContext>();
+            
             
 
             var app = builder.Build();

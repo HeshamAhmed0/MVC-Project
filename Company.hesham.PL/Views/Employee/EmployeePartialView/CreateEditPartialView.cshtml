@@ -1,8 +1,5 @@
 ﻿@model UpdateEmployeeDto
 
-@{
-    @ViewData["department"];
-}
 
 @{
     var Departments = new SelectList(ViewData["department"] as IEnumerable<Department>,"Id","Name");
