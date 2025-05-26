@@ -3,10 +3,12 @@ using Company.BLL.Interfaces;
 using Company.BLL.Reposatories;
 using Company.hesham.DAL.Models;
 using Company.hesham.PL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.hesham.PL.Controllers
 {
+    [Authorize]
     public class DepartmentController : Controller
     {
         private readonly IUnionOfWork _unionOfWork;

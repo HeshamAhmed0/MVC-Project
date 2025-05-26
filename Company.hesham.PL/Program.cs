@@ -31,8 +31,12 @@ namespace Company.hesham.PL
             });
             builder.Services.AddIdentity<AppUser, IdentityRole>()
                             .AddEntityFrameworkStores<CompanyDbContext>();
-            
-            
+
+            builder.Services.ConfigureApplicationCookie(Config =>
+            {
+                Config.LoginPath = "/Auth/SignIn";
+
+            });
 
             var app = builder.Build();
 
@@ -48,12 +52,12 @@ namespace Company.hesham.PL
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Department}/{action=GetAll}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }
