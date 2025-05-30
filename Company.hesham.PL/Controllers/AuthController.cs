@@ -1,4 +1,6 @@
-﻿using Company.hesham.DAL.Models;
+﻿using System.Security.Policy;
+using Company.hesham.DAL.Models;
+using Company.hesham.PL.Helping;
 using Company.hesham.PL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -64,7 +66,6 @@ namespace Company.hesham.PL.Controllers
 
         #endregion
 
-
         #region SignIn
 
         [HttpGet]
@@ -106,6 +107,43 @@ namespace Company.hesham.PL.Controllers
           await signInManager.SignOutAsync();
             return RedirectToAction("SignIn");
         }
+        #endregion
+
+        #region Reset Password
+        [HttpGet]
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ForgerPasswordDto model)
+        {
+            if(ModelState.IsValid)
+            {
+                var user =await userManager.FindByEmailAsync(model.Email);
+                if (user is not null)
+                {
+                    //Generate Tooken
+                    var Tooken =userManager.GeneratePasswordResetTokenAsync(user);
+                    //Generate Url
+                    var url =Url.Action("ResetPassword","Auth",new { email =model.Email,Tooken},Request.Scheme);
+                     Email email = new Email()
+                     {
+                         To=model.Email,
+                         Subject="Resset Password",
+                         Body="URL"
+                     };
+                    var Flag =Helping.EmailSetting.SendEmail(email);
+                    if (Flag)
+                    {
+                        //Check YOur Boks
+                    }
+                }
+            }
+            ModelState.AddModelError("", "InValid Reset Password Operation !!");
+            return View("ForgetPassword", model);
+        }
+
         #endregion
     }
 }
