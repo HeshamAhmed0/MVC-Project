@@ -7,8 +7,18 @@ namespace Company.hesham.PL.Helping
     {
         public static bool SendEmail(Email email)
         {
-            var client = new SmtpClient("smtp.gmail.com", 587);
-            client.Credentials =new NetworkCredential("heshammathana2@gmail.com")
+            try{
+                var client = new SmtpClient("smtp.gmail.com", 587);
+                client.EnableSsl = true;
+                client.Credentials = new NetworkCredential("heshammathana1@gmail.com", "rzwkozvopkrdtjlt");
+                client.Send("heshammathana1@gmail.com", email.To, email.Subject, email.Body);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+       
         }
     }
 }

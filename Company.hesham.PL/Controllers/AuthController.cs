@@ -131,12 +131,12 @@ namespace Company.hesham.PL.Controllers
                      {
                          To=model.Email,
                          Subject="Resset Password",
-                         Body="URL"
+                         Body=url
                      };
                     var Flag =Helping.EmailSetting.SendEmail(email);
                     if (Flag)
                     {
-                        //Check YOur Boks
+                        return RedirectToAction("CheckInBoks");
                     }
                 }
             }
@@ -144,8 +144,11 @@ namespace Company.hesham.PL.Controllers
             return View("ForgetPassword", model);
         }
 
-
-
+        [HttpGet]
+        public IActionResult CheckInBoks()
+        {
+            return View();
+        }
         #endregion
     }
 }
