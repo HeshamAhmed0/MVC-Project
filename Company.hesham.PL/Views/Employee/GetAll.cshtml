@@ -100,7 +100,7 @@
                     <td>@item.HiringDate</td>
                     <td>@item.CreateAt</td>
                     <td>@item.Department?.Name</td>
-                    <partial name="ButtonPartialView" model="@item.Id"></partial>
+                    <partial name="ButtonPartialView" model="@item.Id.ToString()"></partial>
                 </tr>
                 }
        </tbody>

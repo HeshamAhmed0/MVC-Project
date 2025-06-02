@@ -109,14 +109,14 @@ namespace Company.hesham.PL.Controllers
         }
         #endregion
 
-        #region Reset Password
+        #region forget Password
         [HttpGet]
         public IActionResult ForgetPassword()
         {
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> ResetPassword(ForgerPasswordDto model)
+        public async Task<IActionResult> ForgetPassword(ForgerPasswordDto model)
         {
             if(ModelState.IsValid)
             {
@@ -124,7 +124,7 @@ namespace Company.hesham.PL.Controllers
                 if (user is not null)
                 {
                     //Generate Tooken
-                    var Tooken =userManager.GeneratePasswordResetTokenAsync(user);
+                    var Tooken = await userManager.GeneratePasswordResetTokenAsync(user);
                     //Generate Url
                     var url =Url.Action("ResetPassword","Auth",new { email =model.Email,Tooken},Request.Scheme);
                      Email email = new Email()
@@ -147,6 +147,34 @@ namespace Company.hesham.PL.Controllers
         [HttpGet]
         public IActionResult CheckInBoks()
         {
+            return View();
+        }
+        #endregion
+
+        #region Reset Password
+        [HttpGet]
+        public IActionResult ResetPassword(string email ,string Tooken)
+        {
+            TempData["email"]=email; TempData["tooken"]= Tooken;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                var tooken = TempData["tooken"] as string;
+                var email = TempData["email"] as string;
+                if (tooken is null || email is null) return BadRequest("Invalid Operation");
+                var user =await userManager.FindByEmailAsync(email);
+                if (user == null) return BadRequest("Invalid Operation");
+               var result=await userManager.ResetPasswordAsync(user,tooken,model.NewPassword);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("SignIn");
+                }
+            }
+            ModelState.AddModelError("", "Invalid Reset Password");
             return View();
         }
         #endregion
