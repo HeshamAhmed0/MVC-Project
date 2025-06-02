@@ -1,0 +1,16 @@
+﻿@model RoleToResult
+
+
+<h1>Edit Role</h1>
+<form asp-action="Edit" enctype="multipart/form-data">
+    <partial name="RolePartialView\CreateEditPartialView"></partial>
+
+    <div class="my-3">
+        <input type="submit" value="Update" class="btn btn-primary" />
+        <a asp-action="GetAll" asp-controller="Role" class="btn btn-secondary">Back To List</a>
+    </div>
+</form>
+@section validateSection{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}
