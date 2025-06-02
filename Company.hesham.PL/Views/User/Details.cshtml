@@ -1,0 +1,14 @@
+﻿@model UserToResult
+
+
+<h1>User Details</h1>
+<div>
+    <partial name="UserPartialView/DetailsDeletePartialView"></partial>
+
+    <div class="mt-3">
+        <a class="btn btn-info" asp-action="Edit" asp-controller="User" asp-route-id="@Model.Id">Edit</a>
+        <a asp-action="GetAll" asp-controller="User" class="btn btn-secondary">Back To List</a>
+    </div>
+</div>
+
+

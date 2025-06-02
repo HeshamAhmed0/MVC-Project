@@ -2,8 +2,10 @@ using Company.BLL;
 using Company.BLL.Interfaces;
 using Company.BLL.Reposatories;
 using Company.hesham.DAL.Data.DbContexts;
+using Company.hesham.DAL.Models;
 using Company.hesham.PL.Mapping.DepartmentMapping;
 using Company.hesham.PL.Mapping.EmployeeMapping;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.hesham.PL
@@ -27,7 +29,15 @@ namespace Company.hesham.PL
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
-            
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                            .AddEntityFrameworkStores<CompanyDbContext>()
+                            .AddDefaultTokenProviders();
+
+            builder.Services.ConfigureApplicationCookie(Config =>
+            {
+                Config.LoginPath = "/Auth/SignIn";
+
+            });
 
             var app = builder.Build();
 
@@ -43,12 +53,12 @@ namespace Company.hesham.PL
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Department}/{action=GetAll}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

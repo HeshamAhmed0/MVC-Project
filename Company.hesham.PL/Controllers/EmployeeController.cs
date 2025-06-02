@@ -5,10 +5,12 @@ using Company.hesham.DAL.Data.DbContexts;
 using Company.hesham.DAL.Models;
 using Company.hesham.PL.Helping;
 using Company.hesham.PL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.hesham.PL.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly IUnionOfWork _unionOfWork;
@@ -27,12 +29,13 @@ namespace Company.hesham.PL.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(string? SearchInput)
         {
+            var department = await _unionOfWork.depatmenReposatory.GetAllAsync();
+            ViewData["department"] = department;
             IEnumerable<Employee> model;
             if (string.IsNullOrEmpty(SearchInput))
             {
                  model =await _unionOfWork.employeeReposatory.GetAllAsync();
-                var department =await _unionOfWork.depatmenReposatory.GetAllAsync();
-                ViewData["department"] = department;
+               
                 return View(model);
             }else {
                  model =await _unionOfWork.employeeReposatory.GetByNameAsync(SearchInput);
@@ -112,7 +115,7 @@ namespace Company.hesham.PL.Controllers
             var department =await _unionOfWork.depatmenReposatory.GetAllAsync();
             ViewData["department"] = department;
             if (id is null) return NotFound();
-            var employee = _unionOfWork.employeeReposatory.GetByIdAsync(id.Value);
+            var employee =await _unionOfWork.employeeReposatory.GetByIdAsync(id.Value);
             //UpdateEmployeeDto updateEmployeeDto = new UpdateEmployeeDto()
             //{
             //    Name=employee.Name,
@@ -142,7 +145,7 @@ namespace Company.hesham.PL.Controllers
             }
             if (updateEmployeeDto.Image is not null)
             {
-                DocumentSetting.Upload(updateEmployeeDto.Image, "Images");
+              updateEmployeeDto.ImgName=  DocumentSetting.Upload(updateEmployeeDto.Image, "Images");
 
             }
 
