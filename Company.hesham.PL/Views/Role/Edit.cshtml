@@ -6,6 +6,7 @@
     <partial name="RolePartialView\CreateEditPartialView"></partial>
 
     <div class="my-3">
+        <a asp-action="AddOrRemoveRole" asp-controller="Role" asp-route-RoleId="@Model.Id" class="btn btn-success">AddOrRemoveRole</a>
         <input type="submit" value="Update" class="btn btn-primary" />
         <a asp-action="GetAll" asp-controller="Role" class="btn btn-secondary">Back To List</a>
     </div>

@@ -4,16 +4,19 @@ using Company.hesham.PL.Helping;
 using Company.hesham.PL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Company.hesham.PL.Controllers
 {
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<AppUser> userManager;
 
-        public RoleController(RoleManager<IdentityRole> roleManager)
+        public RoleController(RoleManager<IdentityRole> roleManager , UserManager<AppUser> userManager)
         {
             this._roleManager = roleManager;
+            this.userManager = userManager;
         }
 
 
@@ -156,6 +159,67 @@ namespace Company.hesham.PL.Controllers
             }
             ModelState.AddModelError("", "InValid Delete");
             return View(model);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> AddOrRemoveRole(string RoleId)
+        {
+           var role=await _roleManager.FindByIdAsync(RoleId);
+            if (role is null) return NotFound();
+            ViewData["RoleId"] = RoleId;
+            var UserRole = new List<UserRoleToResult>();
+            var users =await userManager.Users.ToListAsync();
+            if(users == null)
+            {
+                return NotFound();
+            }
+            foreach(var user in users)
+            {
+                var UserRoles = new UserRoleToResult()
+                {
+                    Id = user.Id,
+                    Name=user.UserName,
+                };
+                if(await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    UserRoles.IsAdded = true;
+                }
+                else
+                {
+                    UserRoles.IsAdded = false;
+                }
+                UserRole.Add(UserRoles);
+            }
+            return View(UserRole);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrRemoveRole(string roleId, List<UserRoleToResult> UsersRole)
+        {
+            if(ModelState.IsValid)
+            {
+                var role = await _roleManager.FindByIdAsync(roleId);
+                if (role == null) return NotFound();
+                foreach (var userRole in UsersRole)
+                {
+                    var user = await userManager.FindByIdAsync(userRole.Id);
+                    if (user == null) return NotFound();
+
+                    if (userRole.IsAdded == true && !await userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        await userManager.AddToRoleAsync(user, role.Name);
+                    }
+                    else if (!userRole.IsAdded == true && await userManager.IsInRoleAsync(user, role.Name))
+                    {
+                        await userManager.RemoveFromRoleAsync(user, role.Name);
+                    }
+                }
+                return RedirectToAction(nameof(Edit),new {roleId=roleId});
+              
+            }
+
+            return View(UsersRole);
         }
 
     }
